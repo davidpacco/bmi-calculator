@@ -1,3 +1,10 @@
+import { isNotNumber } from "./helper"
+
+interface Params {
+  target: number
+  dailyHrs: number[],
+}
+
 interface Result {
   periodLength: number,
   trainingDays: number,
@@ -6,6 +13,23 @@ interface Result {
   ratingDescription: string,
   target: number,
   average: number
+}
+
+const parseArgs = (args: string[]): Params => {
+  if (args.length < 5) throw new Error('Not enough arguments')
+
+  const values = []
+  for (let value of args.slice(2)) {
+    if (isNotNumber(value)) {
+      throw new Error('Provided values were not numbers')
+    }
+    values.push(Number(value))
+  }
+
+  return {
+    target: values[0],
+    dailyHrs: values.slice(1)
+  }
 }
 
 const calculateExercises = (dailyHrs: number[], target: number): Result => {
@@ -41,4 +65,13 @@ const calculateExercises = (dailyHrs: number[], target: number): Result => {
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+  const { dailyHrs, target } = parseArgs(process.argv)
+  console.log(calculateExercises(dailyHrs, target))
+} catch (error) {
+  let errorMessage = 'Something went wrong'
+  if (error instanceof Error) {
+    errorMessage += error.message
+  }
+  console.log(errorMessage)
+}
