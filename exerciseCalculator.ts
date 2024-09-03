@@ -1,6 +1,6 @@
 import { isNotNumber } from "./helper";
 
-interface Params {
+interface ExerciseParams {
   target: number
   dailyHrs: number[],
 }
@@ -15,7 +15,7 @@ interface Result {
   average: number
 }
 
-const parseArgs = (args: string[]): Params => {
+const parseArgs = (args: string[]): ExerciseParams => {
   if (args.length < 5) throw new Error('Not enough arguments');
 
   const values = [];
@@ -32,7 +32,7 @@ const parseArgs = (args: string[]): Params => {
   };
 };
 
-const calculateExercises = (dailyHrs: number[], target: number): Result => {
+export const calculateExercises = (dailyHrs: number[], target: number): Result => {
   const periodLength = dailyHrs.length;
   const trainingDays = dailyHrs.filter(h => h > 0).length;
   const success = periodLength === trainingDays;
@@ -43,7 +43,7 @@ const calculateExercises = (dailyHrs: number[], target: number): Result => {
   let rating, ratingDescription;
   if (completionRate < 0.5) {
     rating = 1;
-    ratingDescription = 'you need to work harder';
+    ratingDescription = 'bad';
   } else if (completionRate < 1) {
     rating = 2;
     ratingDescription = 'not too bad but could be better';
@@ -66,8 +66,10 @@ const calculateExercises = (dailyHrs: number[], target: number): Result => {
 };
 
 try {
-  const { dailyHrs, target } = parseArgs(process.argv);
-  console.log(calculateExercises(dailyHrs, target));
+  if (require.main === module) {
+    const { dailyHrs, target } = parseArgs(process.argv);
+    console.log(calculateExercises(dailyHrs, target));
+  }
 } catch (error) {
   let errorMessage = 'Something went wrong';
   if (error instanceof Error) {
