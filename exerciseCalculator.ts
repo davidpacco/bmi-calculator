@@ -1,4 +1,4 @@
-import { isNotNumber } from "./helper"
+import { isNotNumber } from "./helper";
 
 interface Params {
   target: number
@@ -16,43 +16,43 @@ interface Result {
 }
 
 const parseArgs = (args: string[]): Params => {
-  if (args.length < 5) throw new Error('Not enough arguments')
+  if (args.length < 5) throw new Error('Not enough arguments');
 
-  const values = []
-  for (let value of args.slice(2)) {
+  const values = [];
+  for (const value of args.slice(2)) {
     if (isNotNumber(value)) {
-      throw new Error('Provided values were not numbers')
+      throw new Error('Provided values were not numbers');
     }
-    values.push(Number(value))
+    values.push(Number(value));
   }
 
   return {
     target: values[0],
     dailyHrs: values.slice(1)
-  }
-}
+  };
+};
 
 const calculateExercises = (dailyHrs: number[], target: number): Result => {
-  const periodLength = dailyHrs.length
-  const trainingDays = dailyHrs.filter(h => h > 0).length
-  const success = periodLength === trainingDays
+  const periodLength = dailyHrs.length;
+  const trainingDays = dailyHrs.filter(h => h > 0).length;
+  const success = periodLength === trainingDays;
 
-  const totalHrs = dailyHrs.reduce((acc, elem) => acc + elem, 0)
-  const completionRate = (totalHrs / (target * periodLength))
+  const totalHrs = dailyHrs.reduce((acc, elem) => acc + elem, 0);
+  const completionRate = (totalHrs / (target * periodLength));
 
-  let rating, ratingDescription
+  let rating, ratingDescription;
   if (completionRate < 0.5) {
-    rating = 1
-    ratingDescription = 'you need to work harder'
+    rating = 1;
+    ratingDescription = 'you need to work harder';
   } else if (completionRate < 1) {
-    rating = 2
-    ratingDescription = 'not too bad but could be better'
+    rating = 2;
+    ratingDescription = 'not too bad but could be better';
   } else {
-    rating = 3
-    ratingDescription = 'perfect, keep it up'
+    rating = 3;
+    ratingDescription = 'perfect, keep it up';
   }
 
-  const average = totalHrs / periodLength
+  const average = totalHrs / periodLength;
 
   return {
     periodLength,
@@ -62,16 +62,16 @@ const calculateExercises = (dailyHrs: number[], target: number): Result => {
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 try {
-  const { dailyHrs, target } = parseArgs(process.argv)
-  console.log(calculateExercises(dailyHrs, target))
+  const { dailyHrs, target } = parseArgs(process.argv);
+  console.log(calculateExercises(dailyHrs, target));
 } catch (error) {
-  let errorMessage = 'Something went wrong'
+  let errorMessage = 'Something went wrong';
   if (error instanceof Error) {
-    errorMessage += error.message
+    errorMessage += error.message;
   }
-  console.log(errorMessage)
+  console.log(errorMessage);
 }
